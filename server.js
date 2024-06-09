@@ -10,8 +10,17 @@ const runner            = require('./test-runner');
 
 const app = express();
 
-app.use(helmet.contentSecurityPolicy({ directives: { defaultSrc: ["'self'"], scriptSrc: ["'self'"] } }))
-
+app.use(helmet({
+  // Disable https preference for development:
+  contentSecurityPolicy: process.env.NODE_ENV === 'development' ? false : {
+    directives: {
+      'script-src': ['\'self\'', 'https://code.jquery.com', 'https://cdn.freecodecamp.org', 'http://localhost:3000'],
+      'img-src': ['\'self\'', 'https://code.jquery.com', 'https://cdn.freecodecamp.org', 'http://localhost:3000'],
+      'connect-src': ['\'self\'', 'https://code.jquery.com', 'https://cdn.freecodecamp.org', 'http://localhost:3000'],
+      'style-src': ['\'self\'', 'https://code.jquery.com', 'https://cdn.freecodecamp.org', 'http://localhost:3000'],
+    }
+  },
+}));
 app.use('/public', express.static(process.cwd() + '/public'));
 
 app.use(cors({origin: '*'})); //For FCC testing purposes only
